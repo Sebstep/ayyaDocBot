@@ -1,9 +1,0 @@
-name: docbot
-channels:
-  - anaconda
-  - conda-forge
-  - defaults
-dependencies:
-  - llama-index
-  - langchain
-  - openai

@@ -1,7 +1,11 @@
 from dotenv import load_dotenv
 import os
 import openai
-from llama_index import ServiceContext, set_global_service_context, get_response_synthesizer
+from llama_index import (
+    ServiceContext,
+    set_global_service_context,
+    get_response_synthesizer,
+)
 from llama_index.llms import OpenAI
 from llama_index.retrievers import VectorIndexRetriever
 from llama_index.query_engine import RetrieverQueryEngine
@@ -37,18 +41,15 @@ retriever = VectorIndexRetriever(
 response_synthesizer = get_response_synthesizer()
 
 # assemble query engine
-# An index can have a variety of index-specific retrieval modes. 
-# For instance, a list index supports the default ListIndexRetriever that retrieves all nodes, 
+# An index can have a variety of index-specific retrieval modes.
+# For instance, a list index supports the default ListIndexRetriever that retrieves all nodes,
 # and ListIndexEmbeddingRetriever that retrieves the top-k nodes by embedding similarity.
 query_engine = RetrieverQueryEngine(
     retriever=retriever,
     response_synthesizer=response_synthesizer,
-    node_postprocessors=[
-        SimilarityPostprocessor(similarity_cutoff=0.7)
-    ]
+    node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.7)],
 )
 
 while True:
     response = query_engine.query(input("User: "))
     print(f"Agent: {response}")
-

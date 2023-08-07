@@ -16,7 +16,6 @@ With conda
 ```bash
 conda env create -f environment.yml
 conda activate docbot
-python -m setup.py
 ```
 
 With pip
@@ -25,7 +24,6 @@ With pip
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-python -m setup.py
 ```
 
 ### Start the bot
@@ -38,4 +36,5 @@ python -m src/docbot
 # Dependencies' Documentations
 
 - [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/end_to_end_tutorials/usage_pattern.html)
-- not yet [LangChain](https://docs.langchain.com/docs/)
+- [Huggingface Transformers](https://github.com/huggingface/transformers)
+- [LangChain](https://docs.langchain.com/docs/) soon
