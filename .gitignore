@@ -1,5 +1,4 @@
 .env
 .ds_store
 models
-storageNodes
-storageDocs
+storage
