@@ -14,7 +14,7 @@ def download_hf_model(hf_slug: str):
 
     if input == "y":
     
-        model_dir = os.path.abspath("models")
+        model_dir = os.path.abspath("llms")
 
         maker, model_name = hf_slug.split("/", 1)
         new_location = os.path.join(model_dir, model_name)
