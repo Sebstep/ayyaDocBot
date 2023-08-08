@@ -24,9 +24,13 @@ A chatbot-to-be for a knowledge-base-to-be.
 ## Roadmap
 
 - [x] Create local index of documents
-- [ ] Make it possible to insert new documents into existing local index
 - [x] Create working Q&A pipeline for documents in the local index
+- [ ] Make it possible to insert new documents into existing local index (rather than always building an entirely new index)
+- [ ] Change the chunking and node creation of documents (books) from length-based to by-paragraph
 - [ ] Switch LLM from OpenAI-API to local model (llama2 / vicuna / bloom / etc.)
+- [ ] Switch local vector database to e.g., "faiss" or "chromaDB" 
+- [ ] Attach a continuous learning database that grows over time
+- [ ] Add guardrails
 
 
 # Documentations

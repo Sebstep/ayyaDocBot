@@ -8,11 +8,10 @@ llama2 = "meta-llama/Llama-2-7b"
 
 
 def download_hf_model(hf_slug: str):
-    print = "Warning: Model download can take a VERY long time."
-    print = "You should have at least 2x the model size in free disk space."
-    input = input("Continue? Press: y")
+    print("\033[93m" + "Warning: Model download can take a VERY long time." + "\033[0m" +  "\nYou should have at least 2x the model size in free disk space.", flush=True)
+    decision = input("To continue, type 'y' and press enter.\nResponse: ")
 
-    if input == "y":
+    if decision == "y":
         model_dir = os.path.abspath("llms")
 
         maker, model_name = hf_slug.split("/", 1)
@@ -26,9 +25,8 @@ def download_hf_model(hf_slug: str):
         tokenizer.save_pretrained(new_location)
         model.save_pretrained(new_location)
 
-        print("Model downloaded to " + new_location)
+        print("\033[92m" + f"Model '{model_name}' downloaded to {new_location}" + "\033[92m", flush=True)
 
 
-# # only activate if needed
-# download_hf_model(vicuna)
-# download_hf_model(llama2)
+download_hf_model(vicuna)
+# download_hf_model(llama2) # not yet openly available
