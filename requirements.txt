@@ -4,3 +4,4 @@ openai
 "huggingface_hub[cli]"
 transformers
 llama_index
+tiktoken
