@@ -4,19 +4,12 @@ A chatbot-to-be for a knowledge-base-to-be.
 
 ## Usage
 
-```bash
-# rename .env file
-mv .env.template .env
-```
+- `mv .env.template .env` to rename the .env file
+- download
 
 ### Create virtual environment
 
-With conda
 
-```bash
-conda env create -f environment.yml
-conda activate docbot
-```
 
 With pip
 
@@ -24,12 +17,6 @@ With pip
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-```
-
-### Start the bot
-
-```bash
-python -m src/docbot
 ```
 
 
