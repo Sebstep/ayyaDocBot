@@ -20,7 +20,6 @@ print(chapters[1])
 print(chapters[2])
 
 
-
 # text_splitter = RecursiveCharacterTextSplitter(
 #     # Set a really small chunk size, just to show.
 #     chunk_size = 2000,
