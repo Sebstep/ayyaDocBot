@@ -5,9 +5,6 @@ A chatbot-to-be for a knowledge-base-to-be.
 ## Setup
 
 - `mv .env.template .env` to rename the .env file
-- Create a virtual environment with `python -m venv venv` or `conda create -n <envname>`
-- `pip install -r requirements.txt` or `conda install --file requirements.txt`
-- 
 
 ## Usage
 
@@ -18,20 +15,19 @@ A chatbot-to-be for a knowledge-base-to-be.
 - `src`: python scripts
   - `docbot.py`: runs the chatbot; can create the local index if it doesn't exist
   - `localModelDownlaod.py`: download llms from huggingface
-  - `storageLogistics.py`: function to create or append to local index
-
+  - `storageLogistics.py`: functions to build or update the local index
 
 ## Roadmap
 
 - [x] Create local index of documents
 - [x] Create working Q&A pipeline for documents in the local index
 - [ ] Make it possible to insert new documents into existing local index (rather than always building an entirely new index)
-- [ ] Change the chunking and node creation of documents (books) from length-based to by-paragraph
+- [ ] Setup more extensive metadata for the local index to improve results
+- [ ] Change the chunking and node creation of documents (books) from length-based to by-paragraph?
 - [ ] Switch LLM from OpenAI-API to local model (llama2 / vicuna / bloom / etc.)
-- [ ] Switch local vector database to e.g., "faiss" or "chromaDB" 
+- [ ] Switch local vector database to (e.g., "faiss" or "chromaDB")
 - [ ] Attach a continuous learning database that grows over time
 - [ ] Add guardrails
-
 
 # Documentations
 
