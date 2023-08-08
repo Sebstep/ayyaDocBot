@@ -19,7 +19,7 @@ load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 while True:
-    print("Do you want to build a new index or load an existing one?")
+    print("Do you want to build a new index or load an existing one from ./storage?")
     input = input("Press [b] to build a new index or [l] to load an existing one.")
     if input == "b":
         build_new_storage()

@@ -1,8 +1,6 @@
 import os
-from dotenv import load_dotenv
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-load_dotenv()
 
 # huggingface model-slugs
 vicuna = "lmsys/vicuna-7b-v1.5-16k"
