@@ -5,7 +5,6 @@ from llama_index import (
     StorageContext,
     ListIndex,
     Document,
-    load_index_from_storage,
     SimpleDirectoryReader,
 )
 from llama_index.node_parser import SimpleNodeParser
@@ -16,7 +15,8 @@ from llama_index.vector_stores import SimpleVectorStore
 from llama_index.node_parser import SimpleNodeParser
 
 
-def buildStorage(my_index_id):
+def build_new_storage():
+    # load documents from directory
     documents = SimpleDirectoryReader("documents/new").load_data()
 
     # create parser and parse document into nodes
@@ -38,16 +38,15 @@ def buildStorage(my_index_id):
     index = VectorStoreIndex(nodes, storage_context=storage_context)
 
     # save index locally
-    index.set_index_id = my_index_id
+    # if you have multiple indices, add a uniqe id for each
+    # index.set_index_id = my_index_id
     index.storage_context.persist(persist_dir="./storage")
 
-    # move files from new to processed
+    # move files from "new" to "processed"
     for fileName in os.listdir("documents/new"):
         old_file = os.getcwd() + "/documents/new/" + fileName
         new_file = os.getcwd() + "/documents/processed/" + fileName
         os.rename(old_file, new_file)
-
-    return index
 
 
 # def insertDoc(index):
@@ -67,10 +66,3 @@ def buildStorage(my_index_id):
 #     # insert
 #     for doc_chunk in doc_chunks:
 #         index.insert(doc_chunk)
-
-
-def loadStorage():
-    # load the persisted stores from persist_dir
-    storage_context = StorageContext.from_defaults(persist_dir="./storage")
-    index = load_index_from_storage(storage_context)
-    return index

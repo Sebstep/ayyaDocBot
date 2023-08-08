@@ -2,22 +2,39 @@ from dotenv import load_dotenv
 import os
 import openai
 from llama_index import (
+    StorageContext,
     ServiceContext,
     set_global_service_context,
     get_response_synthesizer,
+    load_index_from_storage,
 )
 from llama_index.llms import OpenAI
 from llama_index.retrievers import VectorIndexRetriever
 from llama_index.query_engine import RetrieverQueryEngine
 from llama_index.indices.postprocessor import SimilarityPostprocessor
-from src.storageLogistics import buildStorage, loadStorage
+from src.storageLogistics import build_new_storage
 
 # setup
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+while True:
+    print("Do you want to build a new index or load an existing one?")
+    input = input("Press [b] to build a new index or [l] to load an existing one.")
+    if input == "b":
+        build_new_storage()
+        break
+    elif input == "l":
+        # load vector store
+        storage_context = StorageContext.from_defaults(persist_dir="./storage")
+        index = load_index_from_storage(storage_context)
+        break
+    else:
+        print("Invalid input. Try again.")
+
 # load vector store
-index = loadStorage()
+storage_context = StorageContext.from_defaults(persist_dir="./storage")
+index = load_index_from_storage(storage_context)
 
 # define LLM
 llm = OpenAI(model="gpt-3.5-turbo", temperature=0, max_tokens=256)
@@ -26,7 +43,10 @@ llm = OpenAI(model="gpt-3.5-turbo", temperature=0, max_tokens=256)
 service_context = ServiceContext.from_defaults(llm=llm)
 set_global_service_context(service_context)
 
-# See the Custom LLM’s How-To for more details. https://gpt-index.readthedocs.io/en/latest/core_modules/model_modules/llms/usage_custom.html
+# # # # # # # # # # # # # # # #
+# Retriever and synthesizer
+#
+# How-to. https://gpt-index.readthedocs.io/en/latest/core_modules/model_modules/llms/usage_custom.html
 
 # configure retriever
 # defines how to retrieve relevant nodes from the index
