@@ -8,7 +8,13 @@ llama2 = "meta-llama/Llama-2-7b"
 
 
 def download_hf_model(hf_slug: str):
-    print("\033[93m" + "Warning: Model download can take a VERY long time." + "\033[0m" +  "\nYou should have at least 2x the model size in free disk space.", flush=True)
+    print(
+        "\033[93m"
+        + "Warning: Model download can take a VERY long time."
+        + "\033[0m"
+        + "\nYou should have at least 2x the model size in free disk space.",
+        flush=True,
+    )
     decision = input("To continue, type 'y' and press enter.\nResponse: ")
 
     if decision == "y":
@@ -25,7 +31,12 @@ def download_hf_model(hf_slug: str):
         tokenizer.save_pretrained(new_location)
         model.save_pretrained(new_location)
 
-        print("\033[92m" + f"Model '{model_name}' downloaded to {new_location}" + "\033[92m", flush=True)
+        print(
+            "\033[92m"
+            + f"Model '{model_name}' downloaded to {new_location}"
+            + "\033[92m",
+            flush=True,
+        )
 
 
 download_hf_model(vicuna)

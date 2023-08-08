@@ -1,3 +1,5 @@
 .env
 .ds_store
 .vscode
+documents/
+storage/
