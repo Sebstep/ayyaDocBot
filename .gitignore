@@ -1,8 +1,9 @@
-# 
+.ds_store
+
+# find elsewhere
 documents/
 storage/
-
-.ds_store
+llms/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
