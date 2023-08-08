@@ -1,4 +1,4 @@
-import os
+import os, sys, argparse
 from dotenv import load_dotenv
 import openai
 from llama_index import (
@@ -12,25 +12,29 @@ from llama_index.llms import OpenAI
 from llama_index.retrievers import VectorIndexRetriever
 from llama_index.query_engine import RetrieverQueryEngine
 from llama_index.indices.postprocessor import SimilarityPostprocessor
-from src.storageLogistics import build_new_storage
+from storageLogistics import build_new_storage
+
 
 # setup
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-while True:
-    print("Do you want to build a new index or load an existing one from ./storage?")
-    input = input("Press [b] to build a new index or [l] to load an existing one.")
-    if input == "b":
-        build_new_storage()
-        break
-    elif input == "l":
-        # load vector store
-        storage_context = StorageContext.from_defaults(persist_dir="./storage")
-        index = load_index_from_storage(storage_context)
-        break
-    else:
-        print("Invalid input. Try again.")
+
+# parse arguments
+parser = argparse.ArgumentParser(description='Script so useful.')
+parser.add_argument("--build", type=bool, default=False)
+args = parser.parse_args()
+
+
+if args.build:
+    print("Building new storage...")
+    build_new_storage()
+else:
+    # load vector store
+    print("Loading existing storage...")
+    storage_context = StorageContext.from_defaults(persist_dir="./storage")
+    index = load_index_from_storage(storage_context)
+
 
 # load vector store
 storage_context = StorageContext.from_defaults(persist_dir="./storage")

@@ -13,7 +13,7 @@ A chatbot-to-be for a knowledge-base-to-be.
   - `.processed`: documents are moved to after being indexed
 - `llms`: large model files
 - `src`: python scripts
-  - `docbot.py`: runs the chatbot; can create the local index if it doesn't exist
+  - `docbot.py`: runs the chatbot; use `python src/docbot.py --build=true` to build a new index
   - `localModelDownlaod.py`: download llms from huggingface
   - `storageLogistics.py`: functions to build or update the local index
 

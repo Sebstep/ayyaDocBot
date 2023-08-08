@@ -1,7 +1,5 @@
 python-dotenv
-langchain
 openai
-"huggingface_hub[cli]"
 transformers
-llama_index
 tiktoken
+llama_index

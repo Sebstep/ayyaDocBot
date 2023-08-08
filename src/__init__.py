@@ -1,1 +1,1 @@
-from src.storageLogistics import build_new_storage
+from storageLogistics import build_new_storage
