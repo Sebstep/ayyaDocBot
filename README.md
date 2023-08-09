@@ -33,6 +33,8 @@ A chatbot-to-be for a knowledge-base-to-be.
 
 - [Tool Stack Architecture](https://a16z.com/2023/06/20/emerging-architectures-for-llm-applications/)
 - [Which Index Structure to Use](https://www.mikulskibartosz.name/llama-index-which-index-should-you-use/) (docstore/vectorstore/knowledgegraph)
+- [Prompting Guide](https://www.promptingguide.ai/)
+
 ## Packages
 
 - [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/end_to_end_tutorials/usage_pattern.html)
