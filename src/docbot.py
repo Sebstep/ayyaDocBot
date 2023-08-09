@@ -36,10 +36,6 @@ else:
     index = load_index_from_storage(storage_context)
 
 
-# load vector store
-storage_context = StorageContext.from_defaults(persist_dir="./storage")
-index = load_index_from_storage(storage_context)
-
 # define LLM
 llm = OpenAI(model="gpt-3.5-turbo", temperature=0, max_tokens=256)
 
@@ -57,7 +53,7 @@ set_global_service_context(service_context)
 # how to: https://gpt-index.readthedocs.io/en/latest/core_modules/query_modules/retriever/root.html
 retriever = VectorIndexRetriever(
     index=index,
-    similarity_top_k=2,
+    similarity_top_k=4,
 )
 
 # configure response synthesizer
@@ -77,3 +73,5 @@ query_engine = RetrieverQueryEngine(
 while True:
     response = query_engine.query(input("User: "))
     print(f"Agent: {response}")
+    for node in response.source_nodes:
+        print(f"Source node: {node}")

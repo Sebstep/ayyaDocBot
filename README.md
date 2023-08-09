@@ -38,3 +38,14 @@ A chatbot-to-be for a knowledge-base-to-be.
 - [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/end_to_end_tutorials/usage_pattern.html)
 - [Huggingface Transformers](https://github.com/huggingface/transformers)
 - [LangChain](https://docs.langchain.com/docs/) soon
+
+# Misc.
+
+## Using llama with Huggingface
+
+- Get approval from Meta: https://ai.meta.com/resources/models-and-libraries/llama-downloads/
+- Get approval from HF: https://huggingface.co/meta-llama/Llama-2-7b
+- Create a read token from here: https://huggingface.co/settings/tokens
+- `pip install transformers`
+- execute `huggingface-cli` login and provide read token
+- Execute your code. It should work fine.
