@@ -23,7 +23,7 @@ A chatbot-to-be for a knowledge-base-to-be.
 - [x] Create working Q&A pipeline for documents in the local index
 - [ ] Make it possible to insert new documents into existing local index (rather than always building an entirely new index)
 - [ ] Setup more extensive metadata for the local index to improve results
-- [ ] Change the chunking and node creation of documents (books) from length-based to by-paragraph?
+- [ ] Experiment with chunk lengths. Sentenes/paragraphs?
 - [ ] Switch LLM from OpenAI-API to local model (llama2 / vicuna / bloom / etc.)
 - [ ] Switch local vector database to (e.g., "faiss" or "chromaDB")
 - [ ] Attach a continuous learning database that grows over time
@@ -32,7 +32,7 @@ A chatbot-to-be for a knowledge-base-to-be.
 # Documentations
 
 - [Tool Stack Architecture](https://a16z.com/2023/06/20/emerging-architectures-for-llm-applications/)
-
+- [Which Index Structure to Use](https://www.mikulskibartosz.name/llama-index-which-index-should-you-use/) (docstore/vectorstore/knowledgegraph)
 ## Packages
 
 - [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/end_to_end_tutorials/usage_pattern.html)
