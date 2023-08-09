@@ -24,7 +24,7 @@ A chatbot-to-be for a knowledge-base-to-be.
 - [ ] Make it possible to insert new documents into existing local index (rather than always building an entirely new index)
 - [ ] Setup more extensive metadata for the local index to improve results
 - [ ] Experiment with chunk lengths. Sentenes/paragraphs?
-- [ ] Switch LLM from OpenAI-API to local model (llama2 / vicuna / bloom / etc.)
+- [ ] Switch LLM from OpenAI-API to local model (llama2 / vicuna / bloom / etc.), see [here](https://www.youtube.com/watch?v=njzB6fm0U8g)
 - [ ] Switch local vector database to (e.g., "faiss" or "chromaDB")
 - [ ] Attach a continuous learning database that grows over time
 - [ ] Add guardrails
