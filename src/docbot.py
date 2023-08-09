@@ -82,13 +82,12 @@ output_file = os.path.abspath(f"output/{timestamp}_chat_output.txt")
 
 # start the chat
 while True:
-    
     my_query = input("User: ")
     response = query_engine.query(my_query)
-    
+
     print(f"Agent: {response.response}", flush=True)
     print(f"Sources: {response.get_formatted_sources()}", flush=True)
-    
+
     this_sources_dict = {}
     for source in response.source_nodes:
         this_sources_dict["id"] = source.node.node_id
@@ -97,16 +96,14 @@ while True:
 
     this_response_dict = {}
     this_response_dict = {
-    "query": my_query,
-    "response": response.response,
-    "sources": json.dumps(this_sources_dict),
+        "query": my_query,
+        "response": response.response,
+        "sources": json.dumps(this_sources_dict),
     }
 
     all_responses_dict[counter] = this_response_dict
-    
+
     with open(output_file, "w") as f:
         json.dump(all_responses_dict, f)
-    
+
     counter += 1
-
-
