@@ -1,12 +1,10 @@
 import os
-import time
 import openai
 from dotenv import load_dotenv
 import streamlit as st
 from llama_index import (
     StorageContext,
     ServiceContext,
-    set_global_service_context,
     get_response_synthesizer,
     load_index_from_storage,
 )
@@ -14,13 +12,21 @@ from llama_index.llms import OpenAI
 from llama_index.retrievers import VectorIndexRetriever
 from llama_index.query_engine import RetrieverQueryEngine
 from llama_index.indices.postprocessor import SimilarityPostprocessor
-from storageLogistics import build_new_storage
-import json
+from storageLogistics import build_new_storage, parse_doc
+
 import logging
-from filehelpers import get_df_files
+from filehelpers import (
+    parse_response,
+    save_response_to_json,
+    display_response,
+    display_sources,
+)
+from langchain.chat_models import ChatOpenAI
+
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
 # setup logging
 logging.basicConfig(
     level=logging.INFO,
@@ -28,57 +34,52 @@ logging.basicConfig(
     handlers=[logging.FileHandler("docbot.log"), logging.StreamHandler()],
 )
 
-# Initialize Streamlit
-st.title("Document Q&A")
+# constants
+STORAGE_FOLDER = "storage"
+OUTPUT_FOLDER = "output"
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 
 @st.cache_resource
 def get_index():
-    storage_folder = "storage"
-    storage_context = StorageContext.from_defaults(persist_dir=f"./{storage_folder}")
-    index = load_index_from_storage(storage_context)
+    index = load_index_from_storage(
+        StorageContext.from_defaults(persist_dir=f"{STORAGE_FOLDER}"),
+    )
     return index
 
 
-index = get_index()
+# Initialize Streamlit
+st.title("Document Q&A")
 
 # Create a sidebar with options
 with st.sidebar:
     st.sidebar.header("Navigation")
-    selected_option = st.sidebar.radio("Pages:", ["Manage Index", "Chat"])
+    selected_option = st.sidebar.radio("Pages:", ["Manage", "Chat"])
 
     # openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
 
-# Route for the home page
-if selected_option == "Manage Index":
+
+##########################################
+# MANAGE PAGE
+##########################################
+if selected_option == "Manage":
     st.subheader("Manage Index")
-
-    if st.button("Load Index"):
-        with st.status("Loading index..."):
-            index = get_index()
-        st.success("Index loaded successfully!")
-
-    # if st.button("Rebuild Index"):
-    #     with st.status("Building index..."):
-    #         build_index()
-    #     st.success("Index built successfully!")
-
-    if st.button("Get index state"):
-        st.write("The index is live? ", index is not None)
 
     st.write("To upload a new file into the index, use the file uploader below.")
     uploaded_file = st.file_uploader("Choose a file")
     if uploaded_file is not None:
-        bytes_data = uploaded_file.getvalue()
+        parse_doc(uploaded_file, index)
 
 
-# Route for the chat interface page
+##########################################
+# CHAT PAGE
+##########################################
 if selected_option == "Chat":
     st.subheader("LLM Settings")
 
-    col1, col2 = st.columns(2)
+    col_temp, col_tokens = st.columns(2)
 
-    with col1:
+    with col_temp:
         temperature = st.slider(
             label="LLM temperature",
             min_value=0.0,
@@ -88,36 +89,40 @@ if selected_option == "Chat":
             help="How creative the LLM should be",
         )
 
-    with col2:
+    with col_tokens:
         max_tokens = st.slider(
-            "Max. Tokens", 0, 4096, 512, 16, help="How many tokens to generate"
+            label="Max. Tokens",
+            min_value=64,
+            max_value=2048,
+            value=64,
+            step=64,
+            help="How many tokens to generate",
         )
 
-    col3, col4 = st.columns(2)
+    col_topk, col_model = st.columns(2)
 
-    with col3:
-        similarity_top_k = st.number_input(
-            "Similarity Top K",
-            2,
-            20,
-            8,
-            1,
+    with col_topk:
+        top_k_nodes = st.number_input(
+            label="Similarity Top K",
+            min_value=1,
+            max_value=20,
+            value=1,  # set to 6-8 or more for production
+            step=1,
             help="How many similar nodes to return and summarize",
         )
 
-    with col4:
+    with col_model:
         model = st.selectbox(
             "Model", ["gpt-3.5-turbo", "gpt-4"], help="Which model to use"
         )
-
-    # Initialize services and query engine
     llm = OpenAI(model=model, temperature=temperature, max_tokens=max_tokens)
+
     service_context = ServiceContext.from_defaults(llm=llm)
-    set_global_service_context(service_context)
-    retriever = VectorIndexRetriever(
-        index=get_index(), similarity_top_k=similarity_top_k
-    )
+
+    retriever = VectorIndexRetriever(index=get_index(), similarity_top_k=top_k_nodes)
+
     response_synthesizer = get_response_synthesizer(response_mode="refine")
+
     query_engine = RetrieverQueryEngine(
         retriever=retriever,
         response_synthesizer=response_synthesizer,
@@ -126,49 +131,19 @@ if selected_option == "Chat":
 
     # input
     st.subheader("Prompt")
-    user_input = st.text_input("Enter your message and hit enter:")
-    if user_input:
-        with st.status("Awaiting response..."):
-            # Process user input and generate a response
+    user_input = st.text_input("Enter your message:", key="prompt")
+    if st.button("Send"):
+        with st.chat_message("User", avatar="🙋‍♂️"):
+            st.write(user_input)
+        with st.spinner("Getting response..."):
             response = query_engine.query(user_input)
-
-        this_sources_list = []
-        for source in response.source_nodes:
-            source_dict = {
-                "id": source.node.node_id,
-                "text": source.node.text,
-                "score": source.score,
-            }
-            this_sources_list.append(source_dict)
-
-        chat_response = {
-            "message": user_input,
-            "response": response.response,
-            "sources": this_sources_list,
-        }
-
-        # save response locally
-        output_folder = "output"
-        os.makedirs(output_folder, exist_ok=True)
-        timestamp = time.strftime("%Y%m%d%H%M%S")
-        output_file = os.path.join(output_folder, f"{timestamp}_chat_output.txt")
-        with open(output_file, "w") as f:
-            json.dump(chat_response, f)
-
-        # output response
-        st.header("Chat Response")
-        st.write("User: ", chat_response["message"])
-        st.write("Bot: ", chat_response["response"])
-        st.toast(f"Saved to:  {output_file}", icon="💾")
-
-        st.header("Sources:")
-        count = 1
-        for source in this_sources_list:
-            st.subheader(f"Source {count}:")
-            st.write(f"Similarity: {source['score']} - ID: {source['id']}")
-            with st.expander("See source text"):
-                st.write(f"{source['text']}")
-            count += 1
+        st.success("Response received!")
+        parsed_response_dict = parse_response(user_input, response)
+        output_json_file = save_response_to_json(parsed_response_dict, OUTPUT_FOLDER)
+        st.toast(f"Saved to:  {output_json_file}", icon="💾")
+        with st.chat_message("Bot", avatar="🤖"):
+            display_response(parsed_response_dict)
+            display_sources(parsed_response_dict)
 
 
 # Run Streamlit app

@@ -21,8 +21,10 @@ A chatbot-to-be for a knowledge-base-to-be.
 
 - [x] Create local index of documents
 - [x] Create working Q&A pipeline for documents in the local index
+- [x] Create GUI
 - [ ] Make it possible to insert new documents into existing local index (rather than always building an entirely new index)
 - [ ] Setup more extensive metadata for the local index to improve results
+- [ ] Enable Zotero connection ([Docs](https://github.com/urschrei/pyzotero))
 - [ ] Setup [AutoMergingRetriever](https://www.linkedin.com/feed/update/urn:li:activity:7102507748361142273/)
 - [ ] Experiment with chunk lengths. Sentenes/paragraphs?
 - [ ] Switch LLM from OpenAI-API to local model (llama2 / vicuna / bloom / etc.), see [here](https://www.youtube.com/watch?v=njzB6fm0U8g)

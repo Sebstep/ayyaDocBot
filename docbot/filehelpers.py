@@ -1,6 +1,53 @@
 import os
 import streamlit as st
 import pandas as pd
+import json
+import time
+import pickle
+
+
+def parse_response(user_input, response):
+    # Parse response
+
+    this_sources_list = []
+    for source in response.source_nodes:
+        source_dict = {
+            "id": source.node.node_id,
+            "text": source.node.text,
+            "score": source.score,
+            "metadata": source.node.metadata,
+        }
+        this_sources_list.append(source_dict)
+
+    parsed_response_dict = {
+        "message": user_input,
+        "response": response.response,
+        "sources": this_sources_list,
+    }
+
+    return parsed_response_dict
+
+
+def save_response_to_json(chat_response, OUTPUT_FOLDER):
+    timestamp = time.strftime("%Y%m%d%H%M%S")
+    output_json_file = os.path.join(OUTPUT_FOLDER, f"{timestamp}_chat_output.txt")
+
+    with open(output_json_file, "w") as f:
+        json.dump(chat_response, f)
+    return output_json_file
+
+
+def display_response(parsed_response_dict):
+    st.write(parsed_response_dict["response"])
+
+
+def display_sources(parsed_response_dict):
+    count = 1
+    for source in parsed_response_dict["sources"]:
+        with st.expander(f"Source {count}: Similarity: {round(source['score'], 5)}"):
+            st.markdown(f"Node-ID: {source['id']}")
+            st.markdown(f"{source['text']}")
+        count += 1
 
 
 def get_df_files(folder):
