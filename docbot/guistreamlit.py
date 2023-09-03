@@ -72,11 +72,11 @@ if selected_option == "Manage":
 
     # st.write(get_index().ref_doc_info)
 
-    st.write("To upload a new file into the index, use the file uploader below.")
-    uploaded_file = st.file_uploader("Choose a file")
-    if uploaded_file is not None:
-        with open(os.path.join("documents/uploads",uploaded_file.name),"wb") as f:
-            f.write(uploaded_file.getbuffer())
+    # st.write("To upload a new file into the index, use the file uploader below.")
+    # uploaded_file = st.file_uploader("Choose a file")
+    # if uploaded_file is not None:
+    #     with open(os.path.join("documents/uploads",uploaded_file.name),"wb") as f:
+    #         f.write(uploaded_file.getbuffer())
 
 
 
