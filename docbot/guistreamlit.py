@@ -134,7 +134,7 @@ if selected_option == "Chat":
     st.title("Chat Interface")
     if st.session_state["openai"] is None:
 
-        st.warning("Please enter your OpenAI API Key in the sidebar.", icon="⚠️")
+        st.warning('Please enter your OpenAI API Key in the sidebar and press "Update".', icon="⚠️")
     else:
         st.subheader("LLM Settings")
         col_left, col_right = st.columns(2, gap="medium")
