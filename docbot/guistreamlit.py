@@ -17,6 +17,7 @@ from llama_index.indices.postprocessor import SimilarityPostprocessor
 from storageLogistics import build_new_storage
 import json
 import logging
+from filehelpers import get_df_files
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -79,11 +80,11 @@ if selected_option == "Chat":
 
     with col1:
         temperature = st.slider(
-            "LLM temperature",
-            0.0,
-            1.0,
-            0.3,
-            0.05,
+            label="LLM temperature",
+            min_value=0.0,
+            max_value=1.0,
+            value=0.3,
+            step=0.05,
             help="How creative the LLM should be",
         )
 
