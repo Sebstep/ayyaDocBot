@@ -44,7 +44,10 @@ def display_response(parsed_response_dict):
 def display_sources(parsed_response_dict):
     count = 1
     for source in parsed_response_dict["sources"]:
-        with st.expander(f"Source {count} Similarity: {round(source['score'], 5)}, File: " + source["file_name"]):
+        with st.expander(
+            f"Source {count} Similarity: {round(source['score'], 5)}, File: "
+            + source["file_name"]
+        ):
             st.write(f"Node-ID: {source['id']}")
             st.write(f"{source['text']}")
         count += 1

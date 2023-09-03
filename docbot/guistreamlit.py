@@ -51,25 +51,21 @@ def get_index():
 def is_api_key_valid():
     try:
         response = openai.Completion.create(
-            engine="davinci",
-            prompt="This is a test.",
-            max_tokens=5
+            engine="davinci", prompt="This is a test.", max_tokens=5
         )
     except:
         return False
     else:
-        return response
+        return True
 
 
 # Initialize Streamlit
 st.title("Document Q&A")
 
-
-
 # Create a sidebar with options
 with st.sidebar:
     st.sidebar.header("Navigation")
-    selected_option = st.sidebar.radio("Pages:", ["Manage", "Chat"])
+    selected_option = st.sidebar.radio("Pages:", ["Chat", "Manage"])
 
 
 ##########################################
@@ -77,26 +73,6 @@ with st.sidebar:
 ##########################################
 if selected_option == "Manage":
     st.subheader("Setup OpenAI API Key")
-
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-
-    if openai.api_key:
-        st.success("API key loaded from .env file.")
-        index = get_index()
-        st.success("Models loaded!")
-    else:
-        st.info("Enter OpenAI API key below.")
-        openai_keystring = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
-    
-        if st.button("Load Models"):
-            openai.api_key = openai_keystring
-            if not is_api_key_valid():
-                st.error("Invalid API key.")
-                openai.api_key = None
-            else: 
-                st.success("Valid API key.")
-                index = get_index()
-                st.success("Models loaded!")
 
     st.divider()
 
@@ -116,82 +92,120 @@ if selected_option == "Manage":
     #         f.write(uploaded_file.getbuffer())
 
 
-
 ##########################################
 # CHAT PAGE
 ##########################################
 if selected_option == "Chat":
+    if "openai" not in st.session_state:
+        st.session_state["openai"] = None
 
-    st.subheader("LLM Settings")
+    st.subheader("Setup OpenAI API Key")
 
-    col_temp, col_tokens = st.columns(2)
+    if st.session_state["openai"] is None:
+        if os.getenv("OPENAI_API_KEY"):
+            st.session_state["openai"] = os.getenv("OPENAI_API_KEY")
+            st.info("API Key read from environment.")
+        elif openai.api_key:
+            st.session_state["openai"] = openai.api_key
 
-    with col_temp:
-        temperature = st.slider(
-            label="LLM temperature",
-            min_value=0.0,
-            max_value=1.0,
-            value=0.3,
-            step=0.05,
-            help="How creative the LLM should be",
-        )
-
-    with col_tokens:
-        max_tokens = st.slider(
-            label="Max. Tokens",
-            min_value=64,
-            max_value=2048,
-            value=64,
-            step=64,
-            help="How many tokens to generate",
-        )
-
-    col_topk, col_model = st.columns(2)
-
-    with col_topk:
-        top_k_nodes = st.number_input(
-            label="Similarity Top K",
-            min_value=1,
-            max_value=20,
-            value=1,  # set to 6-8 or more for production
-            step=1,
-            help="How many similar nodes to return and summarize",
-        )
-
-    with col_model:
-        model = st.selectbox(
-            "Model", ["gpt-3.5-turbo", "gpt-4"], help="Which model to use"
-        )
-
-    llm = OpenAI(model=model, temperature=temperature, max_tokens=max_tokens)
-
-    service_context = ServiceContext.from_defaults(llm=llm)
-
-    retriever = VectorIndexRetriever(index=get_index(), similarity_top_k=top_k_nodes)
-
-    response_synthesizer = get_response_synthesizer(response_mode="refine")
-
-    query_engine = RetrieverQueryEngine(
-        retriever=retriever,
-        response_synthesizer=response_synthesizer,
-        node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.7)],
+    openai_keystring = st.text_input(
+        "OpenAI API Key", key="chatbot_api_key", value=st.session_state["openai"]
     )
 
-    # input
+    updateAPI, removeAPI = st.columns(2)
+    with updateAPI:
+        if st.button("Update API Key"):
+            openai.api_key = openai_keystring
+            if is_api_key_valid():
+                st.session_state["openai"] = openai_keystring
+                st.success("API Key is valid.")
+            else:
+                st.error("Invalid API Key.")
+                openai.api_key = st.session_state["openai"]
+
+    with removeAPI:
+        if st.button("Remove API Key"):
+            openai.api_key = None
+            st.session_state["openai"] = None
+            st.experimental_rerun()
+
     st.subheader("Prompt")
-    user_input = st.text_input("Enter your message:", key="prompt")
-    if st.button("Send"):
-        with st.chat_message("User", avatar="🙋‍♂️"):
-            st.write(user_input)
-        with st.spinner("Getting response..."):
-            response = query_engine.query(user_input)
-        st.success("Response received!")
-        parsed_response_dict = parse_response(user_input, response)
-        output_json_file = save_response_to_json(parsed_response_dict, OUTPUT_FOLDER)
-        st.toast(f"Saved to:  {output_json_file}", icon="💾")
-        with st.chat_message("Bot", avatar="🤖"):
-            display_response(parsed_response_dict)
-            display_sources(parsed_response_dict)
+
+    if st.session_state["openai"] is not None:
+        st.subheader("LLM Settings")
+
+        # AI Settings
+        col_temp, col_tokens = st.columns(2)
+
+        with col_temp:
+            temperature = st.slider(
+                label="LLM temperature",
+                min_value=0.0,
+                max_value=1.0,
+                value=0.3,
+                step=0.05,
+                help="How creative the LLM should be",
+            )
+
+        with col_tokens:
+            max_tokens = st.slider(
+                label="Max. Tokens",
+                min_value=128,
+                max_value=2048,
+                value=256,
+                step=128,
+                help="How many tokens to generate",
+            )
+
+        col_topk, col_model = st.columns(2)
+
+        with col_topk:
+            top_k_nodes = st.number_input(
+                label="Similarity Top K",
+                min_value=1,
+                max_value=20,
+                value=1,  # set to 6-8 or more for production
+                step=1,
+                help="How many similar nodes to return and summarize",
+            )
+
+        with col_model:
+            model = st.selectbox(
+                "Model", ["gpt-3.5-turbo", "gpt-4"], help="Which model to use"
+            )
+
+        user_input = st.text_input("Enter your message:", key="prompt")
+
+        if st.button("Send"):
+            llm = OpenAI(model=model, temperature=temperature, max_tokens=max_tokens)
+
+            service_context = ServiceContext.from_defaults(llm=llm)
+
+            retriever = VectorIndexRetriever(
+                index=get_index(), similarity_top_k=top_k_nodes
+            )
+
+            response_synthesizer = get_response_synthesizer(response_mode="refine")
+
+            query_engine = RetrieverQueryEngine(
+                retriever=retriever,
+                response_synthesizer=response_synthesizer,
+                node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.7)],
+            )
+
+            with st.chat_message("User", avatar="🙋‍♂️"):
+                st.write(user_input)
+            with st.spinner("Getting response..."):
+                response = query_engine.query(user_input)
+            st.success("Response received!")
+            parsed_response_dict = parse_response(user_input, response)
+            output_json_file = save_response_to_json(
+                parsed_response_dict, OUTPUT_FOLDER
+            )
+            st.toast(f"Saved to:  {output_json_file}", icon="💾")
+            with st.chat_message("Bot", avatar="🤖"):
+                display_response(parsed_response_dict)
+                display_sources(parsed_response_dict)
 
 
 # Run Streamlit app
