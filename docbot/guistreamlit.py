@@ -60,7 +60,6 @@ def is_api_key_valid():
 
 
 # Initialize Streamlit
-st.title("Document Q&A")
 
 if "openai" not in st.session_state:
     st.session_state["openai"] = None
@@ -71,15 +70,16 @@ if st.session_state["openai"] is None:
     elif openai.api_key:
         st.session_state["openai"] = openai.api_key
 
-
-# Create a sidebar with options
+##########################################
+# SIDEBAR
+##########################################
 with st.sidebar:
-    st.sidebar.header("Navigation")
+    st.sidebar.title("Navigation")
     selected_option = st.sidebar.radio("Pages:", ["Chat", "Manage"])
 
     st.sidebar.divider()
 
-    st.subheader("Setup OpenAI API Key")
+    st.sidebar.header("Setup OpenAI API Key")
 
     openai_keystring = st.text_input(
         "OpenAI API Key", key="chatbot_api_key", value=st.session_state["openai"]
@@ -107,11 +107,10 @@ with st.sidebar:
 # MANAGE PAGE
 ##########################################
 if selected_option == "Manage":
-    st.subheader("Setup OpenAI API Key")
+    st.title("Manage Index")
+    st.header("Build New Index")
 
-    st.divider()
-
-    "Warning, building a new index takes very long."
+    st.write("Warning, building a new index takes very long.")
 
     if st.button("Build New Index"):
         with st.spinner("Building new index..."):
@@ -119,9 +118,10 @@ if selected_option == "Manage":
         st.success("New index built!")
 
     # st.write(get_index().ref_doc_info)
-
-    # st.write("To upload a new file into the index, use the file uploader below.")
-    # uploaded_file = st.file_uploader("Choose a file")
+    st.header("Add File to Index")
+    st.write("To upload a new file into the index, use the file uploader below.")
+    st.warning("This feature is not yet implemented.", icon="⚠️")
+    uploaded_file = st.file_uploader("Choose a file")
     # if uploaded_file is not None:
     #     with open(os.path.join("documents/uploads",uploaded_file.name),"wb") as f:
     #         f.write(uploaded_file.getbuffer())
@@ -131,10 +131,14 @@ if selected_option == "Manage":
 # CHAT PAGE
 ##########################################
 if selected_option == "Chat":
-    if st.session_state["openai"] is not None:
-        col_settings, col_chat = st.columns([0.28, 0.72])
+    st.title("Chat Interface")
+    if st.session_state["openai"] is None:
 
-        st.subheader("LLM Settings")
+        st.warning("Please enter your OpenAI API Key in the sidebar.", icon="⚠️")
+    
+    else:
+
+        col_settings, col_chat = st.columns([0.28, 0.72], gap="medium")
 
         with col_settings:
             st.subheader("LLM Settings")
@@ -164,7 +168,7 @@ if selected_option == "Chat":
                 label="Max. Tokens",
                 min_value=128,
                 max_value=2048,
-                value=256,
+                value=512,
                 step=128,
                 help="How many tokens to generate",
             )
