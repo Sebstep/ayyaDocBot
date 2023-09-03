@@ -3,6 +3,7 @@
 # find elsewhere
 documents/
 llms/
+output/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
