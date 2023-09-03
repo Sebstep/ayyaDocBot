@@ -108,7 +108,7 @@ with st.sidebar:
 ##########################################
 if selected_option == "Manage":
     st.title("Manage Index")
-    st.header("Build New Index")
+    # st.header("Build New Index")
 
     # st.write("Warning, building a new index takes very long.")
 
