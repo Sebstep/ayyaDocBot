@@ -110,12 +110,12 @@ if selected_option == "Manage":
     st.title("Manage Index")
     st.header("Build New Index")
 
-    st.write("Warning, building a new index takes very long.")
+    # st.write("Warning, building a new index takes very long.")
 
-    if st.button("Build New Index"):
-        with st.spinner("Building new index..."):
-            build_new_storage()
-        st.success("New index built!")
+    # if st.button("Build New Index"):
+    #     with st.spinner("Building new index..."):
+    #         build_new_storage()
+    #     st.success("New index built!")
 
     # st.write(get_index().ref_doc_info)
     st.header("Add File to Index")
