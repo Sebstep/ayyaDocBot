@@ -21,7 +21,9 @@ def build_new_storage():
 
     # create parser and parse document into nodes
     # how to customize: https://gpt-index.readthedocs.io/en/latest/core_modules/data_modules/index/usage_pattern.html#low-level-api
-    parser = SimpleNodeParser()
+    parser = SimpleNodeParser.from_defaults(
+        chunk_size=300,
+    )
     nodes = parser.get_nodes_from_documents(documents)
 
     # create storage context using default stores
@@ -42,11 +44,7 @@ def build_new_storage():
     # index.set_index_id = my_index_id
     index.storage_context.persist(persist_dir="./storage")
 
-    # move files from "new" to "processed"
-    for fileName in os.listdir("documents/new"):
-        old_file = os.getcwd() + "/documents/new/" + fileName
-        new_file = os.getcwd() + "/documents/processed/" + fileName
-        os.rename(old_file, new_file)
+    return index
 
 
 # def insertDoc(index):

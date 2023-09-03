@@ -3,3 +3,7 @@ openai
 transformers
 tiktoken
 llama_index
+streamlit
+watchdog
+ntlk
+llama-cpp-python
