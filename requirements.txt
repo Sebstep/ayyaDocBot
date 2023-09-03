@@ -8,3 +8,4 @@ watchdog
 ntlk
 llama-cpp-python
 span-marker
+pypdf

@@ -25,11 +25,11 @@ from llama_index.node_parser.extractors import (
 def set_node_parser(chunk_size):
     metadata_extractor = MetadataExtractor(
         extractors=[
-            TitleExtractor(nodes=5),
-            QuestionsAnsweredExtractor(questions=3),
-            SummaryExtractor(summaries=["prev", "self"]),
-            KeywordExtractor(keywords=10),
-            EntityExtractor(prediction_threshold=0.5),
+            # TitleExtractor(nodes=5),
+            # QuestionsAnsweredExtractor(questions=3),
+            # SummaryExtractor(summaries=["prev", "self"]),
+            # KeywordExtractor(keywords=10),
+            # EntityExtractor(prediction_threshold=0.5),
         ],
     )
 
@@ -43,11 +43,11 @@ def set_node_parser(chunk_size):
 
 def build_new_storage():
     # load documents from directory
-    documents = SimpleDirectoryReader("documents/new").load_data()
+    documents = SimpleDirectoryReader("documents/new", filename_as_id=True).load_data()
 
     # parse document into nodes
     node_parser = set_node_parser(300)
-    nodes = node_parser.get_nodes_from_documents(documents)
+    nodes = node_parser.get_nodes_from_documents(documents, show_progress=True)
 
     # create storage context using default stores
     storage_context = StorageContext.from_defaults(
@@ -70,17 +70,17 @@ def build_new_storage():
     return vector_index
 
 
-def insert_doc(document, index):
-    storage_context = StorageContext.from_defaults(
-        docstore=SimpleDocumentStore(),
-        index_store=SimpleIndexStore(),
-        vector_store=SimpleVectorStore(),
-    )
+# def insert_doc(document, index):
+#     storage_context = StorageContext.from_defaults(
+#         docstore=SimpleDocumentStore(),
+#         index_store=SimpleIndexStore(),
+#         vector_store=SimpleVectorStore(),
+#     )
 
-    node_parser = set_node_parser(300)
-    nodes = node_parser.get_nodes_from_documents(document)
+#     node_parser = set_node_parser(300)
+#     nodes = node_parser.get_nodes_from_documents(document)
 
-    storage_context.docstore.add_documents(nodes)
+#     storage_context.docstore.add_documents(nodes)
 
-    for node in nodes:
-        index.insert(node)
+#     for node in nodes:
+#         index.insert(node)

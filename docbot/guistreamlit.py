@@ -12,7 +12,7 @@ from llama_index.llms import OpenAI
 from llama_index.retrievers import VectorIndexRetriever
 from llama_index.query_engine import RetrieverQueryEngine
 from llama_index.indices.postprocessor import SimilarityPostprocessor
-from storageLogistics import build_new_storage, parse_doc
+from storageLogistics import build_new_storage
 
 import logging
 from filehelpers import (
@@ -54,7 +54,7 @@ st.title("Document Q&A")
 # Create a sidebar with options
 with st.sidebar:
     st.sidebar.header("Navigation")
-    selected_option = st.sidebar.radio("Pages:", ["Manage", "Chat"])
+    selected_option = st.sidebar.radio("Pages:", ["Chat", "Manage"])
 
     # openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
 
@@ -65,16 +65,28 @@ with st.sidebar:
 if selected_option == "Manage":
     st.subheader("Manage Index")
 
+    if st.button("Build New Index"):
+        with st.spinner("Building new index..."):
+            build_new_storage()
+        st.success("New index built!")
+
+    # st.write(get_index().ref_doc_info)
+
     st.write("To upload a new file into the index, use the file uploader below.")
     uploaded_file = st.file_uploader("Choose a file")
     if uploaded_file is not None:
-        parse_doc(uploaded_file, index)
+        with open(os.path.join("documents/uploads",uploaded_file.name),"wb") as f:
+            f.write(uploaded_file.getbuffer())
+
 
 
 ##########################################
 # CHAT PAGE
 ##########################################
 if selected_option == "Chat":
+    index = get_index()
+
+
     st.subheader("LLM Settings")
 
     col_temp, col_tokens = st.columns(2)
@@ -115,11 +127,12 @@ if selected_option == "Chat":
         model = st.selectbox(
             "Model", ["gpt-3.5-turbo", "gpt-4"], help="Which model to use"
         )
+
     llm = OpenAI(model=model, temperature=temperature, max_tokens=max_tokens)
 
     service_context = ServiceContext.from_defaults(llm=llm)
 
-    retriever = VectorIndexRetriever(index=get_index(), similarity_top_k=top_k_nodes)
+    retriever = VectorIndexRetriever(index=index, similarity_top_k=top_k_nodes)
 
     response_synthesizer = get_response_synthesizer(response_mode="refine")
 
