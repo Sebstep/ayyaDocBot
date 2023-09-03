@@ -51,10 +51,19 @@ def get_index():
 # Initialize Streamlit
 st.title("Document Q&A")
 
+
+
 # Create a sidebar with options
 with st.sidebar:
     st.sidebar.header("Navigation")
     selected_option = st.sidebar.radio("Pages:", ["Manage", "Chat"])
+
+
+##########################################
+# MANAGE PAGE
+##########################################
+if selected_option == "Manage":
+    st.subheader("Manage Index")
 
     openai_keystring = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
 
@@ -65,19 +74,16 @@ with st.sidebar:
             index = get_index()
         st.success("Models loaded!")
 
+    st.divider()
 
-##########################################
-# MANAGE PAGE
-##########################################
-if selected_option == "Manage":
-    st.subheader("Manage Index")
+    "Warning, building a new index takes very long."
 
     if st.button("Build New Index"):
         with st.spinner("Building new index..."):
             build_new_storage()
         st.success("New index built!")
 
-    st.write(get_index().ref_doc_info)
+    # st.write(get_index().ref_doc_info)
 
     # st.write("To upload a new file into the index, use the file uploader below.")
     # uploaded_file = st.file_uploader("Choose a file")
@@ -137,7 +143,7 @@ if selected_option == "Chat":
 
     service_context = ServiceContext.from_defaults(llm=llm)
 
-    retriever = VectorIndexRetriever(index=index, similarity_top_k=top_k_nodes)
+    retriever = VectorIndexRetriever(index=get_index(), similarity_top_k=top_k_nodes)
 
     response_synthesizer = get_response_synthesizer(response_mode="refine")
 
