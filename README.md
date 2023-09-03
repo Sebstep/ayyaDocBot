@@ -28,7 +28,7 @@ A chatbot-to-be for a knowledge-base-to-be.
 - [ ] Make it possible to insert new documents into existing local index (rather than always building an entirely new index)
 - [ ] Setup more extensive metadata for the local index to improve results
   - [ ] Setup metadata explorer
-- [ ] Connect t confluence
+- [ ] Connect to confluence via [llamahub-connector](https://llamahub.ai/l/confluence)
 - [ ] Enable Zotero connection ([Docs](https://github.com/urschrei/pyzotero))
 - [ ] Setup [AutoMergingRetriever](https://www.linkedin.com/feed/update/urn:li:activity:7102507748361142273/)
 - [ ] Experiment with chunk lengths. Sentenes/paragraphs?

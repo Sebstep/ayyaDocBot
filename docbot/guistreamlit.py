@@ -48,6 +48,19 @@ def get_index():
     return index
 
 
+def is_api_key_valid():
+    try:
+        response = openai.Completion.create(
+            engine="davinci",
+            prompt="This is a test.",
+            max_tokens=5
+        )
+    except:
+        return False
+    else:
+        return True
+
+
 # Initialize Streamlit
 st.title("Document Q&A")
 
@@ -70,6 +83,8 @@ if selected_option == "Manage":
     if st.button("Load Models"):
         if not openai.api_key:
             openai.api_key = openai_keystring
+            if not is_api_key_valid():
+                st.error("Invalid API key.")
         with st.spinner("Loading models..."):
             index = get_index()
         st.success("Models loaded!")
