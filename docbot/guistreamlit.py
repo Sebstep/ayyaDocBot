@@ -135,33 +135,13 @@ if selected_option == "Chat":
     if st.session_state["openai"] is None:
 
         st.warning("Please enter your OpenAI API Key in the sidebar.", icon="⚠️")
-    
     else:
+        st.subheader("LLM Settings")
+        col_left, col_right = st.columns(2, gap="medium")
 
-        col_settings, col_chat = st.columns([0.28, 0.72], gap="medium")
-
-        with col_settings:
-            st.subheader("LLM Settings")
+        with col_left:
             model = st.selectbox(
                 "Model", ["gpt-3.5-turbo", "gpt-4"], help="Which model to use"
-            )
-
-            top_k_nodes = st.number_input(
-                label="Similarity Top K",
-                min_value=1,
-                max_value=20,
-                value=6,  # set to 6-8 or more for production
-                step=1,
-                help="How many similar nodes to return and summarize",
-            )
-
-            temperature = st.slider(
-                label="LLM temperature",
-                min_value=0.0,
-                max_value=1.0,
-                value=0.3,
-                step=0.05,
-                help="How creative the LLM should be",
             )
 
             max_tokens = st.slider(
@@ -173,44 +153,65 @@ if selected_option == "Chat":
                 help="How many tokens to generate",
             )
 
-        with col_chat:
-            st.subheader("Chat Interface")
-            user_input = st.text_input("Enter your message:", key="prompt")
+        with col_right:
 
-            if st.button("Send"):
-                llm = OpenAI(
-                    model=model, temperature=temperature, max_tokens=max_tokens
-                )
+            top_k_nodes = st.number_input(
+                label="Similarity Top K",
+                min_value=1,
+                max_value=20,
+                value=6,  # set to 6-8 or more for production
+                step=1,
+                help="How many similar nodes to return and summarize",
+            )
+            temperature = st.slider(
+                label="LLM temperature",
+                min_value=0.0,
+                max_value=1.0,
+                value=0.3,
+                step=0.05,
+                help="How creative the LLM should be",
+            )
 
-                service_context = ServiceContext.from_defaults(llm=llm)
+        st.subheader("Chat Interface")
+        user_input = st.text_input("Enter your message:", key="prompt")
 
-                retriever = VectorIndexRetriever(
-                    index=get_index(), similarity_top_k=top_k_nodes
-                )
+        if st.button("Send"):
+            llm = OpenAI(
+                model=model, temperature=temperature, max_tokens=max_tokens
+            )
 
-                response_synthesizer = get_response_synthesizer(response_mode="refine")
+            service_context = ServiceContext.from_defaults(llm=llm)
 
-                query_engine = RetrieverQueryEngine(
-                    retriever=retriever,
-                    response_synthesizer=response_synthesizer,
-                    node_postprocessors=[
-                        SimilarityPostprocessor(similarity_cutoff=0.7)
-                    ],
-                )
+            retriever = VectorIndexRetriever(
+                index=get_index(), similarity_top_k=top_k_nodes
+            )
 
-                with st.chat_message("User", avatar="🙋‍♂️"):
-                    st.write(user_input)
-                with st.spinner("Getting response..."):
-                    response = query_engine.query(user_input)
-                st.success("Response received!")
-                parsed_response_dict = parse_response(user_input, response)
-                output_json_file = save_response_to_json(
-                    parsed_response_dict, OUTPUT_FOLDER
-                )
-                st.toast(f"Saved to:  {output_json_file}", icon="💾")
-                with st.chat_message("Bot", avatar="🤖"):
-                    display_response(parsed_response_dict)
-                    display_sources(parsed_response_dict)
+            response_synthesizer = get_response_synthesizer(response_mode="refine")
+
+            query_engine = RetrieverQueryEngine(
+                retriever=retriever,
+                response_synthesizer=response_synthesizer,
+                node_postprocessors=[
+                    SimilarityPostprocessor(similarity_cutoff=0.7)
+                ],
+            )
+
+            with st.chat_message("User", avatar="🙋‍♂️"):
+                st.write(user_input)
+            with st.spinner("Getting response..."):
+                response = query_engine.query(user_input)
+            st.success("Response received!")
+            parsed_response_dict = parse_response(user_input, response)
+            output_json_file = save_response_to_json(
+                parsed_response_dict, OUTPUT_FOLDER
+            )
+            st.toast(f"Saved to:  {output_json_file}", icon="💾")
+            with st.chat_message("Bot", avatar="🤖"):
+                display_response(parsed_response_dict)
+                st.subheader("Sources")
+                display_sources(parsed_response_dict)
+                st.subheader("Full JSON Object")
+                st.json(parsed_response_dict, expanded=True)
 
 
 # Run Streamlit app

@@ -12,10 +12,10 @@ def parse_response(user_input, response):
     this_sources_list = []
     for source in response.source_nodes:
         source_dict = {
-            "id": source.node.node_id,
-            "text": source.node.text,
-            "score": source.score,
             "file_name": source.node.metadata["file_name"],
+            "similarity": source.score,
+            "node_id": source.node.node_id,
+            "text": source.node.text,
         }
         this_sources_list.append(source_dict)
 
@@ -45,10 +45,10 @@ def display_sources(parsed_response_dict):
     count = 1
     for source in parsed_response_dict["sources"]:
         with st.expander(
-            f"Source {count} Similarity: {round(source['score'], 5)}, File: "
+            f"Source {count} Similarity: {round(source['similarity'], 5)}, File: "
             + source["file_name"]
         ):
-            st.write(f"Node-ID: {source['id']}")
+            st.write(f"Node-ID: {source['node_id']}")
             st.write(f"{source['text']}")
         count += 1
 
