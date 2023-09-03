@@ -1,8 +1,6 @@
 import os, sys, argparse
 from dotenv import load_dotenv
 import logging
-import openai
-import streamlit
 
 
 # setup logging
@@ -11,10 +9,6 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[logging.FileHandler("docbot.log"), logging.StreamHandler()],
 )
-
-# setup
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 # run terminal

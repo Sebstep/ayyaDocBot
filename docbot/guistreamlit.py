@@ -24,8 +24,8 @@ from localhelpers import (
 from langchain.chat_models import ChatOpenAI
 
 
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# load_dotenv()
+# openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # setup logging
 logging.basicConfig(
@@ -58,7 +58,7 @@ def is_api_key_valid():
     except:
         return False
     else:
-        return True
+        return response
 
 
 # Initialize Streamlit
@@ -76,18 +76,27 @@ with st.sidebar:
 # MANAGE PAGE
 ##########################################
 if selected_option == "Manage":
-    st.subheader("Manage Index")
+    st.subheader("Setup OpenAI API Key")
 
-    openai_keystring = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
+    openai.api_key = os.getenv("OPENAI_API_KEY")
 
-    if st.button("Load Models"):
-        if not openai.api_key:
+    if openai.api_key:
+        st.success("API key loaded from .env file.")
+        index = get_index()
+        st.success("Models loaded!")
+    else:
+        st.info("Enter OpenAI API key below.")
+        openai_keystring = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
+    
+        if st.button("Load Models"):
             openai.api_key = openai_keystring
             if not is_api_key_valid():
                 st.error("Invalid API key.")
-        with st.spinner("Loading models..."):
-            index = get_index()
-        st.success("Models loaded!")
+                openai.api_key = None
+            else: 
+                st.success("Valid API key.")
+                index = get_index()
+                st.success("Models loaded!")
 
     st.divider()
 
