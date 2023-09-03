@@ -15,7 +15,7 @@ from llama_index.indices.postprocessor import SimilarityPostprocessor
 from storageLogistics import build_new_storage
 
 import logging
-from filehelpers import (
+from localhelpers import (
     parse_response,
     save_response_to_json,
     display_response,
@@ -70,7 +70,7 @@ if selected_option == "Manage":
             build_new_storage()
         st.success("New index built!")
 
-    # st.write(get_index().ref_doc_info)
+    st.write(get_index().ref_doc_info)
 
     # st.write("To upload a new file into the index, use the file uploader below.")
     # uploaded_file = st.file_uploader("Choose a file")

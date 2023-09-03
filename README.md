@@ -4,16 +4,19 @@ A chatbot-to-be for a knowledge-base-to-be.
 
 ## Setup
 
+- Create and activate virtual environment using venv or conda
 - `mv .env.template .env` to rename the .env file
+- `pip install -r requirements.txt`
+- `python -m run` to start the streamlit app
 
 ## Usage
 
 - `documents`: folder contains the documents to be indexed for the knowledge base
   - `.new`: files here are to be inserted into an existing index
   - `.processed`: documents are moved to after being indexed
-- `llms`: large model files
-- `src`: python scripts
-  - `docbot.py`: runs the chatbot; use `python src/docbot.py --build=true` to build a new index
+- `llms`: large model file
+- `docbot`: python scripts
+  - `docbot.py`: runs the chatbot in the terminal; use `python src/docbot.py --build=true` to build a new index
   - `localModelDownlaod.py`: download llms from huggingface
   - `storageLogistics.py`: functions to build or update the local index
 
@@ -24,6 +27,8 @@ A chatbot-to-be for a knowledge-base-to-be.
 - [x] Create GUI
 - [ ] Make it possible to insert new documents into existing local index (rather than always building an entirely new index)
 - [ ] Setup more extensive metadata for the local index to improve results
+  - [ ] Setup metadata explorer
+- [ ] Connect t confluence
 - [ ] Enable Zotero connection ([Docs](https://github.com/urschrei/pyzotero))
 - [ ] Setup [AutoMergingRetriever](https://www.linkedin.com/feed/update/urn:li:activity:7102507748361142273/)
 - [ ] Experiment with chunk lengths. Sentenes/paragraphs?
