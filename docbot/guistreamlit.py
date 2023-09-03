@@ -54,9 +54,16 @@ st.title("Document Q&A")
 # Create a sidebar with options
 with st.sidebar:
     st.sidebar.header("Navigation")
-    selected_option = st.sidebar.radio("Pages:", ["Chat", "Manage"])
+    selected_option = st.sidebar.radio("Pages:", ["Manage", "Chat"])
 
-    # openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
+    openai_keystring = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
+
+    if st.button("Load Models"):
+        if not openai.api_key:
+            openai.api_key = openai_keystring
+        with st.spinner("Loading models..."):
+            index = get_index()
+        st.success("Models loaded!")
 
 
 ##########################################
@@ -84,8 +91,6 @@ if selected_option == "Manage":
 # CHAT PAGE
 ##########################################
 if selected_option == "Chat":
-    index = get_index()
-
 
     st.subheader("LLM Settings")
 
