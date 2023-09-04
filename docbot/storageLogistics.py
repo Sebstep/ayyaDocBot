@@ -22,7 +22,7 @@ from llama_index.node_parser.extractors import (
 )
 
 
-def set_node_parser(chunk_size):
+def parse_docs_into_nodes(documents, chunk_size=300):
     metadata_extractor = MetadataExtractor(
         extractors=[
             # TitleExtractor(nodes=5),
@@ -38,16 +38,16 @@ def set_node_parser(chunk_size):
         metadata_extractor=metadata_extractor,
     )
 
-    return node_parser
+    nodes = node_parser.get_nodes_from_documents(documents, show_progress=True)
+
+    return nodes
 
 
 def build_new_storage():
     # load documents from directory
     documents = SimpleDirectoryReader("documents/new", filename_as_id=True).load_data()
-
+    parse_docs_into_nodes(documents)
     # parse document into nodes
-    node_parser = set_node_parser(300)
-    nodes = node_parser.get_nodes_from_documents(documents, show_progress=True)
 
     # create storage context using default stores
     storage_context = StorageContext.from_defaults(
