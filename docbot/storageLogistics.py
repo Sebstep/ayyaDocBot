@@ -46,7 +46,7 @@ def parse_docs_into_nodes(documents, chunk_size=300):
 def build_new_storage():
     # load documents from directory
     documents = SimpleDirectoryReader("documents/new", filename_as_id=True).load_data()
-    parse_docs_into_nodes(documents)
+    nodes = parse_docs_into_nodes(documents)
     # parse document into nodes
 
     # create storage context using default stores
