@@ -27,7 +27,10 @@ def build_new_storage(
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
     service_context = ServiceContext.from_defaults(chunk_size=chunk_size)
     index = VectorStoreIndex.from_documents(
-        documents, storage_context=storage_context, service_context=service_context, show_progress=True
+        documents,
+        storage_context=storage_context,
+        service_context=service_context,
+        show_progress=True,
     )
     index.storage_context.persist(persist_dir=f"{storage_folder}/{type}")
     return index

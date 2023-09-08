@@ -28,8 +28,7 @@ STORAGE_FOLDER = os.getenv("STORAGE_FOLDER")
 OUTPUT_FOLDER = os.getenv("OUTPUT_FOLDER")
 STORAGE_TYPE = os.getenv("STORAGE_TYPE")
 
-# DOC_LIMIT = False
-DOC_LIMIT = 3
+DOC_LIMIT = False  # set to integer for testing
 
 if DOC_LIMIT:
     documents = SimpleDirectoryReader(

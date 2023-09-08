@@ -44,7 +44,9 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 # Define function to initialize the index
 @st.cache_resource
 def get_index():
-    storage_context = StorageContext.from_defaults(persist_dir=f"{STORAGE_FOLDER}/{STORAGE_TYPE}")
+    storage_context = StorageContext.from_defaults(
+        persist_dir=f"{STORAGE_FOLDER}/{STORAGE_TYPE}"
+    )
     index = load_index_from_storage(storage_context=storage_context)
     return index
 
@@ -182,9 +184,7 @@ if selected_option == "Chat":
 
             service_context = ServiceContext.from_defaults(llm=llm)
 
-            retriever = VectorIndexRetriever(
-                index=index, similarity_top_k=top_k_nodes
-            )
+            retriever = VectorIndexRetriever(index=index, similarity_top_k=top_k_nodes)
 
             response_synthesizer = get_response_synthesizer(response_mode="refine")
 
