@@ -10,6 +10,7 @@ from llama_index import (
     set_global_service_context,
     get_response_synthesizer,
     load_index_from_storage,
+    SimpleDirectoryReader,
 )
 from llama_index.llms import OpenAI
 from llama_index.retrievers import VectorIndexRetriever
@@ -23,7 +24,19 @@ from storageLogistics import build_new_storage
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 llm = OpenAI(model="gpt-3.5-turbo", temperature=0, max_tokens=256)
-storage_folder = os.getenv("STORAGE_FOLDER")
-output_folder = os.getenv("OUTPUT_FOLDER")
+STORAGE_FOLDER = os.getenv("STORAGE_FOLDER")
+OUTPUT_FOLDER = os.getenv("OUTPUT_FOLDER")
+STORAGE_TYPE = os.getenv("STORAGE_TYPE")
 
-build_new_storage()
+# DOC_LIMIT = False
+DOC_LIMIT = 3
+
+if DOC_LIMIT:
+    documents = SimpleDirectoryReader(
+        "documents/new", filename_as_id=True, num_files_limit=DOC_LIMIT
+    ).load_data()
+else:
+    documents = SimpleDirectoryReader("documents/new", filename_as_id=True).load_data()
+
+
+build_new_storage(documents, type=STORAGE_TYPE, storage_folder=STORAGE_FOLDER)
