@@ -23,7 +23,6 @@ from storageLogistics import build_new_storage
 # setup
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
-llm = OpenAI(model="gpt-3.5-turbo", temperature=0, max_tokens=256)
 STORAGE_FOLDER = os.getenv("STORAGE_FOLDER")
 OUTPUT_FOLDER = os.getenv("OUTPUT_FOLDER")
 STORAGE_TYPE = os.getenv("STORAGE_TYPE")
