@@ -1,1 +1,1 @@
-storage filter=lfs diff=lfs merge=lfs -text
+storage/simple/vector_store.json filter=lfs diff=lfs merge=lfs -text
