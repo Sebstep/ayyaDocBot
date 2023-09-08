@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-wrap: break-word; /* Soft wrap for long text */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .slider-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            width: 80%;
+            margin-right: 10px;
+        }
+
+        .slider-value {
+            width: 20%;
+            text-align: right;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100px;
+            margin: 0 auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Style for JSON object */
+        h3 {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        pre {
+            white-space: pre-wrap; /* Soft wrap for preformatted text */
+            background-color: #f7f7f7;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            overflow-x: auto; /* Horizontal scrollbar if needed */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chat Interface</h1>
+        <form action="/chat" method="post">
+            <label for="model">Model:</label>
+            <select id="model" name="model" required>
+                <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                <option value="gpt-4">gpt-4</option>
+            </select>
+
+            <label for="top_k_nodes">Similarity Top K:</label>
+            <input type="number" id="top_k_nodes" name="top_k_nodes" min="1" max="20" value="6" step="1" required>
+
+            <div class="slider-container">
+                <label for="max_tokens">Max. Tokens:</label>
+                <input type="range" id="max_tokens" name="max_tokens" min="128" max="2048" value="512" step="128" required>
+                <div class="slider-value"><span id="max_tokens-value">512</span></div>
+            </div>
+
+            <div class="slider-container">
+                <label for="temperature">LLM Temperature:</label>
+                <input type="range" id="temperature" name="temperature" min="0" max="1" value="0.3" step="0.05" required>
+                <div class="slider-value"><span id="temperature-value">0.3</span></div>
+            </div>
+
+            <label for="user_input">Enter your message:</label>
+            <input type="text" id="user_input" name="user_input" required>
+
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    {% if response %}
+    <div class="container">
+        <h2>Response:</h2>
+        <p>User Input: {{ response.message }}</p>
+        <p>Bot Response:</p>
+        <p>{{ response.response }}</p>
+        <h3>Sources:</h3>
+        <ul>
+            {% for source in response.sources %}
+            <li>{{ source }}</li>
+            {% endfor %}
+        </ul>
+        <h3>Full JSON Object:</h3>
+        <pre>{{ response|tojson(indent=4) }}</pre>
+    </div>
+    {% endif %}
+
+    <script>
+        // Update slider values next to the respective sliders
+        const maxTokensSlider = document.getElementById('max_tokens');
+        const maxTokensValue = document.getElementById('max_tokens-value');
+        maxTokensSlider.addEventListener('input', () => {
+            maxTokensValue.textContent = maxTokensSlider.value;
+        });
+
+        const temperatureSlider = document.getElementById('temperature');
+        const temperatureValue = document.getElementById('temperature-value');
+        temperatureSlider.addEventListener('input', () => {
+            temperatureValue.textContent = temperatureSlider.value;
+        });
+    </script>
+</body>
+</html>
