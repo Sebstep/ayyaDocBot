@@ -33,7 +33,7 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 # Initialize the index
 index = load_index_from_storage(
-    StorageContext.from_defaults(persist_dir=f"{STORAGE_FOLDER}")
+    StorageContext.from_defaults(persist_dir=f"{STORAGE_FOLDER}/simple")
 )
 
 
