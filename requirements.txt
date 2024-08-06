@@ -102,4 +102,4 @@ watchdog==3.0.0
 Werkzeug==3.0.3
 xxhash==3.3.0
 yarl==1.9.2
-zipp==3.16.2
+zipp==3.19.1
